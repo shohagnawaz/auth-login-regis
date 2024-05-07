@@ -1,12 +1,38 @@
-import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../provider/AuthProvider";
 
 const Login = () => {
-    const handleLogin = e => {
-        e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-        console.log(email, password);
-    }
+  const { signInUser, signInWithGoogle } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    console.log(email, password);
+    // user signIn/login
+    signInUser(email, password)
+      .then((result) => {
+        console.log(result.user);
+        e.target.reset();
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleGoogle = () => {
+    signInWithGoogle()
+      .then((result) => {
+        console.log(result.user);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col">
@@ -21,7 +47,7 @@ const Login = () => {
               </label>
               <input
                 type="email"
-                name= "email"
+                name="email"
                 placeholder="email"
                 className="input input-bordered"
                 required
@@ -48,10 +74,16 @@ const Login = () => {
               <button className="btn btn-primary">Login</button>
             </div>
           </form>
-          <p className="ml-8">New to here? Please
+          <p className="ml-8">
+            New to here? Please
             <Link to="/registration">
-                <button className="btn btn-link">Register</button>
+              <button className="btn btn-link">Register</button>
             </Link>
+            <p>
+              <button onSubmit={handleGoogle} className="btn btn-ghost">
+                Google
+              </button>
+            </p>
           </p>
         </div>
       </div>
